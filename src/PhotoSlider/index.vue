@@ -2,6 +2,7 @@
   <teleport to="body">
     <div
       v-if="photoVisible"
+      ref="wrapperRef"
       class="PhotoSlider__Wrapper"
       :class="{
         'PhotoSlider__Clean': showAnimateType !== ShowAnimateEnum.None ,
@@ -19,22 +20,38 @@
         }"
         @animationend="onShowAnimateEnd(), resetBackdropOpacity()"
       />
-      <div class="PhotoSlider__BannerWrap">
-        <div class="PhotoSlider__Counter">
-          {{ index + 1 }} / {{ items.length }}
+      <div class="PhotoSlider__BannerWrap TopRight">
+        <div class="PhotoSlider__Banner">
+          <close
+            class="PhotoSlider__BannerIcon"
+            @click="handleClickClose"
+          />
         </div>
-        <div class="PhotoSlider__BannerRight">
+      </div>
+      <div class="PhotoSlider__BannerWrap Bottom">
+        <!-- <div class="PhotoSlider__Counter">
+          {{ index + 1 }} / {{ items.length }}
+        </div> -->
+        <div class="PhotoSlider__Banner">
+          <full-screen
+            class="PhotoSlider__BannerIcon"
+            @click="handleFullScreen"
+          />
+          <original-size
+            class="PhotoSlider__BannerIcon"
+            @click="handleOriginalSize"
+          />
           <download
             class="PhotoSlider__BannerIcon"
             @click="handleDownload"
           />
-          <rotate-left
-            class="PhotoSlider__BannerIcon"
-            @click="handleRotateLeft"
-          />
           <rotate-right
             class="PhotoSlider__BannerIcon"
             @click="handleRotateRight"
+          />
+          <rotate-left
+            class="PhotoSlider__BannerIcon"
+            @click="handleRotateLeft"
           />
           <flip-horizontal
             class="PhotoSlider__BannerIcon"
@@ -44,9 +61,13 @@
             class="PhotoSlider__BannerIcon"
             @click="toggleFlipVertical"
           />
-          <close
+          <zoom-in
             class="PhotoSlider__BannerIcon"
-            @click="handleClickClose"
+            @click="handleZoomIn"
+          />
+          <zoom-out
+            class="PhotoSlider__BannerIcon"
+            @click="handleZoomOut"
           />
         </div>
       </div>
@@ -78,6 +99,9 @@
         <div
           v-if="loop || index > 0"
           class="PhotoSlider__ArrowLeft"
+          :style="{
+            left: overlayVisible ? `${thumbnailWidth}px` : '0'
+          }"
           @click="handlePrevious"
         >
           <arrow-left />
@@ -90,12 +114,32 @@
           <arrow-right />
         </div>
       </template>
-      <div
+
+      <!-- <div
         v-if="currentItem.intro"
         class="PhotoSlider__FooterWrap"
       >
         {{ currentItem.intro }}
-      </div>
+      </div> -->
+
+      <transition
+        name="fade"
+        mode="out-in"
+        appear
+      >
+        <div
+          v-if="Array.isArray($props.items) && $props.items.length && overlayVisible"
+          class="PhotoSlider__BannerWrap Left"
+          :style="{
+            width: `${thumbnailWidth}px`
+          }"
+        >
+          <photo-thumbnail
+            :items="$props.items"
+            :index="$props.index"
+          />
+        </div>
+      </transition>
     </div>
   </teleport>
 </template>
@@ -114,14 +158,21 @@ import RotateRight from './RotateRight.vue';
 import FlipHorizontal from './FlipHorizontal.vue';
 import FlipVertical from './FlipVertical.vue';
 import Download from './Download.vue';
+import FullScreen from './FullScreen.vue';
+import OriginalSize from './OriginalSize.vue';
+import ZoomIn from './ZoomIn.vue';
+import ZoomOut from './ZoomOut.vue';
+import PhotoThumbnail from '../PhotoThumbnail/index.vue';
 import useAnimationHandle from './useAnimationHandle';
 import { ItemType, ShowAnimateEnum, TouchTypeEnum, EdgeTypeEnum } from '../types';
 import isTouchDevice from '../utils/isTouchDevice';
+import { maxScale, scaleStep, thumbnailMaxWidth, thumbnailMinWidth } from '../constant';
 
 export default defineComponent({
   name: 'PhotoSlider',
   components: {
     PhotoView,
+    PhotoThumbnail,
     Close,
     ArrowLeft,
     ArrowRight,
@@ -130,6 +181,10 @@ export default defineComponent({
     FlipHorizontal,
     FlipVertical,
     Download,
+    FullScreen,
+    OriginalSize,
+    ZoomIn,
+    ZoomOut,
   },
   props: {
     /**
@@ -202,8 +257,19 @@ export default defineComponent({
     } = useAnimationHandle(visible, currentItem);
     const { innerWidth } = useInnerWidth();
 
+    const thumbnailWidth = computed(() => {
+      return Math.max(
+        Math.min(
+          Math.ceil(innerWidth.value / 4),
+          thumbnailMaxWidth
+        ),
+        thumbnailMinWidth
+      );
+    });
+
     return {
       innerWidth,
+      thumbnailWidth,
       currentItem,
       photoVisible,
       showAnimateType,
@@ -299,6 +365,57 @@ export default defineComponent({
     },
     handleRotateRight() {
       this.photoViewRefs[this.currentItem.key]?.handleRotateRight();
+    },
+    handleFullScreen() {
+      const wrapperRef = this.$refs.wrapperRef as HTMLElement;
+
+      if (wrapperRef) {
+        const { width, height } = wrapperRef.getBoundingClientRect();
+        const currentImage = this.photoViewRefs[this.currentItem.key];
+
+        if (currentImage) {
+          Object.assign(currentImage, {
+            scale: width / currentImage.width,
+            rotate: 0,
+            x: 0,
+            y: currentImage.width <= currentImage.height
+              ? (height - currentImage.height) / -2
+              : 0,
+          });
+        }
+      }
+    },
+    handleOriginalSize() {
+      const currentImage = this.photoViewRefs[this.currentItem.key];
+
+      if (currentImage) {
+        Object.assign(currentImage, {
+          scale: 1,
+          rotate: 0,
+          x: 0,
+          y: 0,
+        });
+      }
+    },
+    handleZoomIn() {
+      const currentImage = this.photoViewRefs[this.currentItem.key];
+
+      if (currentImage?.scale) {
+        const increment = (currentImage.scale % 1) < .2;
+        const toScale = Math.ceil(currentImage.scale) + Number(increment) * scaleStep;
+
+        currentImage.scale = Math.min(maxScale, toScale);
+      }
+    },
+    handleZoomOut() {
+      const currentImage = this.photoViewRefs[this.currentItem.key];
+
+      if (currentImage?.scale) {
+        const increment = (currentImage.scale % 1) < .8;
+        const toScale = Math.floor(currentImage.scale) - Number(increment) * scaleStep;
+
+        currentImage.scale = Math.max(toScale, 1);
+      }
     },
     setPhotoViewRef(key: string, ref: InstanceType<typeof PhotoView>) {
       this.photoViewRefs[key] = ref;
@@ -518,6 +635,16 @@ export default defineComponent({
   z-index: 2000;
   user-select: none;
 
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity .2s ease-out;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
   .PhotoSlider__Backdrop {
     position: absolute;
     top: 0;
@@ -538,23 +665,55 @@ export default defineComponent({
 
   .PhotoSlider__BannerWrap {
     position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 44px;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 0;
     transition: opacity 0.2s ease-out;
-    z-index: 20;
 
     @media (any-hover: hover){
       &:hover {
         opacity: 1;
       }
     }
+  }
+
+  .PhotoSlider__BannerWrap.TopRight {
+    top: 20px;
+    right: 20px;
+    z-index: 21;
+
+    .PhotoSlider__BannerIcon {
+      box-sizing: content-box;
+      padding: 8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 16px;
+      fill: white;
+      background: rgba(255, 255, 255, .3);
+      cursor: pointer;
+      opacity: .7;
+      transition: opacity .2s linear;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .PhotoSlider__BannerWrap.Left {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 11;
+  }
+
+  .PhotoSlider__BannerWrap.Bottom {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    z-index: 20;
 
     .PhotoSlider__Counter {
       padding: 0 10px;
@@ -562,19 +721,25 @@ export default defineComponent({
       opacity: 0.75;
     }
 
-    .PhotoSlider__BannerRight {
+    .PhotoSlider__Banner {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100%;
+      border-radius: 3px;
+      padding: 3px 12px;
+      font-size: 14px;
+      color: rgb(78, 89, 105);
+      background-color: #FFF;
 
       .PhotoSlider__BannerIcon {
         vertical-align: top;
-        box-sizing: border-box;
-        padding: 10px;
+        box-sizing: content-box;
+        padding: 10px 8px;
         opacity: 0.75;
         cursor: pointer;
         transition: all 0.2s linear;
+        width: 1em;
+        height: 1em;
 
         @media (any-hover: hover){
           &:hover {
@@ -612,7 +777,7 @@ export default defineComponent({
     top: 0;
     bottom: 0;
     margin: auto 0 auto 0;
-    width: 70px;
+    width: 72px;
     height: 100px;
     opacity: 0.7;
     z-index: 20;
@@ -630,35 +795,36 @@ export default defineComponent({
 
     svg {
       box-sizing: content-box;
-      padding: 10px;
-      width: 24px;
-      height: 24px;
+      padding: 8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 16px;
       fill: white;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, .3);
     }
   }
 
-  .PhotoSlider__FooterWrap {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    box-sizing: border-box;
-    width: 100%;
-    min-height: 44px;
-    padding: 10px;
-    line-height: 1.5;
-    font-size: 14px;
-    text-align: justify;
-    color: #ccc;
-    background-color: rgba(0, 0, 0, 0.5);
-    transition: opacity 0.2s ease-out;
-    z-index: 20;
+  // .PhotoSlider__FooterWrap {
+  //   position: absolute;
+  //   left: 0;
+  //   bottom: 0;
+  //   box-sizing: border-box;
+  //   width: 100%;
+  //   min-height: 44px;
+  //   padding: 10px;
+  //   line-height: 1.5;
+  //   font-size: 14px;
+  //   text-align: justify;
+  //   color: #ccc;
+  //   background-color: rgba(0, 0, 0, 0.5);
+  //   transition: opacity 0.2s ease-out;
+  //   z-index: 20;
 
-    @media (any-hover: hover){
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
+  //   @media (any-hover: hover){
+  //     &:hover {
+  //       opacity: 1;
+  //     }
+  //   }
+  // }
 }
 </style>

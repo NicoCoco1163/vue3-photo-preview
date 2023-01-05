@@ -114,7 +114,7 @@ export default defineComponent({
       handleWheel,
       rotate,
       handleRotateLeft,
-      handleRotateRight
+      handleRotateRight,
     };
   },
   data() {

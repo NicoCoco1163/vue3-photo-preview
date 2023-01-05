@@ -2,11 +2,13 @@ import { App } from 'vue';
 import PhotoProvider from './PhotoProvider/index.vue';
 import PhotoConsumer from './PhotoConsumer/index.vue';
 import PhotoSlider from './PhotoSlider/index.vue';
+import PhotoThumbnail from './PhotoThumbnail/index.vue';
 
 const components = [
   PhotoProvider,
   PhotoConsumer,
-  PhotoSlider
+  PhotoSlider,
+  PhotoThumbnail
 ];
 
 const install = (app: App): void  => {
@@ -17,6 +19,6 @@ const install = (app: App): void  => {
 
 export * from './types';
 
-export { PhotoProvider, PhotoConsumer, PhotoSlider };
+export { PhotoProvider, PhotoConsumer, PhotoSlider, PhotoThumbnail };
 
 export default { install };

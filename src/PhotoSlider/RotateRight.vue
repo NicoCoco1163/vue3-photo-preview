@@ -1,15 +1,17 @@
 <template>
   <svg
-    viewBox="0 0 1000 1000"
+    viewBox="0 0 48 48"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    width="44"
-    height="44"
+    width="40"
+    height="40"
+    stroke-width="4"
+    stroke-linecap="butt"
+    stroke-linejoin="miter"
+    stroke="currentColor"
+    fill="none"
   >
-    <path
-      fill="#FFF"
-      d="M555.668 258.9754V47.24496791175579l327.3385 327.3241L555.668 701.8941V485.52881146582615c-380.8294-8.9369-364.4728 258.9334-267.5596 434.5814C48.8389 661.5105 99.6385 247.0815 555.668 258.9754z"
-    />
+    <path d="M38 22a1 1 0 0 0-1-1H17a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h20a1 1 0 0 0 1-1V22ZM25 11H14a6 6 0 0 0-6 6v6M25.5 12.893 28.413 11 25.5 9.107v3.786Z" />
   </svg>
 </template>
 

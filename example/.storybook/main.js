@@ -7,6 +7,11 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials"
   ],
+  core: {
+    builder: {
+      name: 'webpack5'
+    },
+  },
   webpackFinal: async (config) => {
     // 不使用 link 的真实路径，解决 corejs 报错问题
     config.resolve.symlinks = false;

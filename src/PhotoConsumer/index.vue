@@ -1,6 +1,6 @@
 <template>
   <span
-    v-if="$slots.default()"
+    v-if="$slots.default?.()"
     ref="root"
     style="display:inline-block;"
     class="PhotoConsumer"
@@ -39,7 +39,14 @@ export default defineComponent({
     downloadName: {
       type: String,
       default: null
-    }
+    },
+    /**
+     * 缩略图地址，可选
+     */
+    thumbnailSrc: {
+      type: String,
+      default: null
+    },
   },
   setup(props) {
     const updateItem = inject(updateItemKey);
@@ -47,7 +54,7 @@ export default defineComponent({
     const handleShow = inject(handleShowKey);
     const root = ref<HTMLElement | null>(null);
     const key = uniqueId();
-    const { src, intro, downloadName } = toRefs(props);
+    const { src, intro, downloadName, thumbnailSrc } = toRefs(props);
 
     const handleClick = () => {
       handleShow?.(key);
@@ -57,10 +64,11 @@ export default defineComponent({
       src: src.value,
       originRef: root.value,
       intro: intro.value,
-      downloadName: downloadName.value
+      downloadName: downloadName.value,
+      thumbnailSrc: thumbnailSrc.value,
     });
 
-    watch([src, intro, downloadName], () => {
+    watch([src, intro, downloadName, thumbnailSrc], () => {
       updateItem?.(getItem());
     });
 

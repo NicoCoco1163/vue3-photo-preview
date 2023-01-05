@@ -9,6 +9,8 @@ export type ItemType = {
   intro?: string | null;
   // 图片下载名称
   downloadName?: string | null;
+  // 缩略图地址
+  thumbnailSrc?: string | null;
 }
 
 export type OriginRectType = {
@@ -23,6 +25,8 @@ export type UpdateItemType = (item: ItemType) => void;
 export type RemoveItemType = (key: string) => void;
 
 export type HandleShowType = (key: string) => void;
+
+export type updateIndexType = (key: number) => void;
 
 // 动画类型
 export enum ShowAnimateEnum {

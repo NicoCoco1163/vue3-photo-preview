@@ -19,7 +19,7 @@
 
 <script lang='ts'>
 import { defineComponent, PropType, provide } from 'vue';
-import { updateItemKey, removeItemKey, handleShowKey } from '../symbols';
+import { updateItemKey, removeItemKey, handleShowKey, updateIndexKey } from '../symbols';
 import useItems from './useItems';
 import useVisible from './useVisible';
 import useIndex from './useIndex';
@@ -90,6 +90,7 @@ export default defineComponent({
     provide(updateItemKey, updateItem);
     provide(removeItemKey, removeItem);
     provide(handleShowKey, handleShow);
+    provide(updateIndexKey, updateIndex);
 
     return {
       items,

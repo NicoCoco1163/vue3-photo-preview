@@ -1,3 +1,4 @@
+
 {
   "name": "vue3-photo-preview-example",
   "version": "0.1.0",
@@ -7,7 +8,6 @@
     "build": "build-storybook"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
     "vue": "3.2.17",
     "vue3-photo-preview": "file:.."
   },
@@ -17,8 +17,9 @@
     "@storybook/addon-docs": "^6.3.7",
     "@storybook/addon-essentials": "^6.3.7",
     "@storybook/addon-links": "^6.3.7",
-    "@storybook/builder-webpack5": "^6.4.19",
-    "@storybook/manager-webpack5": "^6.4.19",
+    "@storybook/addon-postcss": "^2.0.0",
+    "@storybook/builder-webpack5": "^6.5.15",
+    "@storybook/manager-webpack5": "^6.5.15",
     "@storybook/vue3": "^6.3.7",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
@@ -26,6 +27,8 @@
     "@vue/compiler-sfc": "3.2.17",
     "autoprefixer": "^10.4.13",
     "babel-loader": "^8.2.2",
+    "css-loader": "^6.7.3",
+    "postcss-flexbugs-fixes": "^5.0.2",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "storybook": "^6.5.15",

@@ -27,6 +27,12 @@
     "deploy": "deploy.sh",
     "release": "npm run build && release.sh"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "FORCE_COLOR=1 node scripts/verify-commit.js"
+    }
+  },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,vue}": "eslint"
   },
