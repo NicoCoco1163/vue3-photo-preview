@@ -11,6 +11,7 @@ import pkg from './package.json';
 
 export default {
   input: 'src/index.ts',
+  external: ['vue'],
   output: [
     {
       file: pkg.main,
@@ -33,15 +34,17 @@ export default {
     vue({
       preprocessStyles: true,
     }),
+    nodeResolve({
+      dedupe: ['vue']
+    }),
+    external(),
+    commonjs(),
+    typescript({
+      useTsconfigDeclarationDir: true
+    }),
     postcss({
       extract: 'index.css',
       plugins: [autoprefixer()]
     }),
-    typescript({
-      useTsconfigDeclarationDir: true
-    }),
-    commonjs(),
-    nodeResolve(),
-    external()
   ]
 };

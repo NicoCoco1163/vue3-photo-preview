@@ -1,13 +1,13 @@
 <template>
   <div class="PhotoThumbnail__Wrapper">
     <div
-      v-for="(item, currentIndex) in $props.items"
+      v-for="(item, currentIndex) in items"
       :key="item.key"
       class="PhotoThumbnail__Box"
     >
       <div
         :class="['Wrap', {
-          Selected: currentIndex === $props.index
+          Selected: currentIndex === index
         }]"
         @click="clickOnThumbnail(currentIndex)"
       >
@@ -28,11 +28,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, inject } from 'vue';
+import { defineComponent, PropType, inject, toRefs } from 'vue';
 import { updateIndexKey } from '../symbols';
 import { ItemType } from '../types';
 
 export default defineComponent({
+  name: 'PhotoThumbnail',
   props: {
     /**
      * 图片列表
@@ -50,7 +51,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-
+    const { items, index } = toRefs(props);
     const updateIndex = inject(updateIndexKey);
 
     function getItemName(src: string | unknown) {
@@ -60,13 +61,15 @@ export default defineComponent({
       return src;
     }
 
-    function clickOnThumbnail(index: number) {
-      if (index !== props.index) {
-        updateIndex?.(index);
+    function clickOnThumbnail(toIndex: number) {
+      if (toIndex !== index.value) {
+        updateIndex?.(toIndex);
       }
     }
 
     return {
+      items,
+      index,
       getItemName,
       clickOnThumbnail
     };
