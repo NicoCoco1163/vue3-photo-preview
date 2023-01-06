@@ -9,7 +9,8 @@
     :default-backdrop-opacity="defaultBackdropOpacity"
     :items="items"
     :loop="loop"
-    :download-method="downloadMethod"
+    :on-download="onDownload"
+    :on-print="onPrint"
     @clickPhoto="handleClickPhoto"
     @clickMask="handleClickMask"
     @changeIndex="updateIndex"
@@ -70,7 +71,14 @@ export default defineComponent({
     /**
      * 下载图片方法，不传使用内置的下载方法
      */
-    downloadMethod: {
+    onDownload: {
+      type: Function as PropType<(item: ItemType) => void | null>,
+      default: null,
+    },
+    /**
+     * 打印方法，传入方法时显示图标
+     */
+    onPrint: {
       type: Function as PropType<(item: ItemType) => void | null>,
       default: null,
     }

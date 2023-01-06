@@ -45,6 +45,11 @@
             class="PhotoSlider__BannerIcon"
             @click="handleDownload"
           />
+          <printer
+            v-if="showPrinterIcon"
+            class="PhotoSlider__BannerIcon Small"
+            @click="handlePrint"
+          />
           <rotate-right
             class="PhotoSlider__BannerIcon"
             @click="handleRotateRight"
@@ -128,7 +133,7 @@
         appear
       >
         <div
-          v-if="Array.isArray($props.items) && $props.items.length && overlayVisible"
+          v-if="Array.isArray($props.items) && ($props.items.length > 1) && overlayVisible"
           class="PhotoSlider__BannerWrap Left"
           :style="{
             width: `${thumbnailWidth}px`
@@ -162,6 +167,7 @@ import FullScreen from './FullScreen.vue';
 import OriginalSize from './OriginalSize.vue';
 import ZoomIn from './ZoomIn.vue';
 import ZoomOut from './ZoomOut.vue';
+import Printer from './Printer.vue';
 import PhotoThumbnail from '../PhotoThumbnail/index.vue';
 import useAnimationHandle from './useAnimationHandle';
 import { ItemType, ShowAnimateEnum, TouchTypeEnum, EdgeTypeEnum } from '../types';
@@ -185,6 +191,7 @@ export default defineComponent({
     OriginalSize,
     ZoomIn,
     ZoomOut,
+    Printer,
   },
   props: {
     /**
@@ -239,7 +246,14 @@ export default defineComponent({
     /**
      * 下载图片方法，不传使用内置的下载方法
      */
-    downloadMethod: {
+    onDownload: {
+      type: Function as PropType<(item: ItemType) => void | null>,
+      default: null,
+    },
+    /**
+     * 打印方法，传入方法时显示图标
+     */
+     onPrint: {
       type: Function as PropType<(item: ItemType) => void | null>,
       default: null,
     }
@@ -308,6 +322,10 @@ export default defineComponent({
         return connect.slice(len + this.index - 1, len + this.index + 2);
       }
       return this.items.slice(Math.max(this.index - 1, 0), Math.min(this.index + 2, len));
+    },
+    showPrinterIcon() {
+      return (typeof this.onPrint === 'function') ||
+        (typeof this?.$?.proxy?.$photoPreview?.onPrint === 'function');
     }
   },
   created() {
@@ -320,7 +338,7 @@ export default defineComponent({
     this.photoViewRefs = {};
   },
   methods: {
-    defaultDownloadMethod(item: ItemType) {
+    defaultOnDownload(item: ItemType) {
       const paths = item.src.split('/');
       const name = paths[paths.length - 1];
 
@@ -348,10 +366,24 @@ export default defineComponent({
     },
     handleDownload() {
       const item = this.items[this.index];
-      if (typeof this.downloadMethod === 'function') {
-        this.downloadMethod(item);
+      const proxy = this?.$?.proxy as any;
+
+      if (typeof this.onDownload === 'function') {
+        this.onDownload(item);
+      } else if (typeof proxy?.$photoPreview?.onDownload === 'function') {
+        proxy.$photoPreview.onDownload(item);
       } else {
-        this.defaultDownloadMethod(item);
+        this.defaultOnDownload(item);
+      }
+    },
+    handlePrint() {
+      const item = this.items[this.index];
+      const proxy = this?.$?.proxy as any;
+
+      if (typeof this.onPrint === 'function') {
+        this.onPrint(item);
+      } else if (typeof proxy?.$photoPreview?.onPrint === 'function') {
+        proxy.$photoPreview.onPrint(item);
       }
     },
     toggleFlipHorizontal() {
@@ -740,6 +772,12 @@ export default defineComponent({
         transition: all 0.2s linear;
         width: 1em;
         height: 1em;
+
+        &.Small {
+          width: calc(1em - 2px);
+          height: calc(1em - 2px);
+          padding: 11px 9px;
+        }
 
         @media (any-hover: hover){
           &:hover {

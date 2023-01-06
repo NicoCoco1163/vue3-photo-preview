@@ -68,8 +68,6 @@ export default defineComponent({
     }
 
     return {
-      items,
-      index,
       getItemName,
       clickOnThumbnail
     };
@@ -83,6 +81,7 @@ export default defineComponent({
   &__Wrapper {
     background-color: #FFF;
     padding: 20px 0;
+    min-height: 100vh;
   }
 
   &__Box {
@@ -115,13 +114,15 @@ export default defineComponent({
     .Intro {
       color: rgb(78, 89, 105);
       font-size: 12px;
-      line-height: 24px;
-      margin: 8px 0 0;
+      line-height: 18px;
+      margin: 4px 0 0;
+      padding: 8px 0 0;
       overflow: hidden;
       text-overflow: ellipsis;
       -moz-osx-font-smoothing: grayscale;
       -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: rgba(0,0,0,0);
+      word-break: break-all;
     }
 
     .Selected {

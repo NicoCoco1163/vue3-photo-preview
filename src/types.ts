@@ -50,3 +50,26 @@ export enum EdgeTypeEnum {
   Top,
   Bottom,
 }
+
+// Provider 参数
+export type PhotoProviderProps = {
+  // 图片点击是否关闭
+  photoClosable: boolean;
+  // 背景点击是否关闭
+  maskClosable: boolean;
+  // 箭头切换是否需要过渡
+  shouldTransition: boolean;
+  // 默认背景透明度
+  defaultBackdropOpacity: number;
+  // 是否循环显示预览图
+  loop: boolean;
+  // 下载图片方法，不传使用内置的下载方法
+  onDownload: (item: ItemType) => void | null;
+}
+
+export type PhototProviderReturnProps = {
+  visible: boolean;
+  index: number;
+  updateIndex: (newIndex: number) => void;
+  [key: string]: unknown;
+}
