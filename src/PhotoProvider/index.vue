@@ -2,7 +2,8 @@
   <!-- @slot 默认插槽 -->
   <slot />
   <photo-slider
-    :visible="visible"
+    :append-to-body="!showInComponent"
+    :visible="showInComponent || visible"
     :index="index"
     :should-transition="shouldTransition"
     :toggle-overlay="!photoClosable"
@@ -15,7 +16,18 @@
     @clickMask="handleClickMask"
     @changeIndex="updateIndex"
     @closeModal="handleHide"
-  />
+  >
+    <!-- Pass slots to slider -->
+    <template
+      v-for="(_, name) in $slots"
+      #[name]="slotData"
+    >
+      <slot
+        :name="name"
+        v-bind="slotData || {}"
+      />
+    </template>
+  </photo-slider>
 </template>
 
 <script lang='ts'>
@@ -51,6 +63,13 @@ export default defineComponent({
      * 箭头切换是否需要过渡
      */
     shouldTransition: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * 是否展示在组件中
+     */
+    showInComponent: {
       type: Boolean,
       default: false,
     },

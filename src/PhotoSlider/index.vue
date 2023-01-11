@@ -1,5 +1,8 @@
 <template>
-  <teleport to="body">
+  <teleport
+    to="body"
+    :disabled="!appendToBody"
+  >
     <div
       v-if="photoVisible"
       ref="wrapperRef"
@@ -20,7 +23,10 @@
         }"
         @animationend="onShowAnimateEnd(), resetBackdropOpacity()"
       />
-      <div class="PhotoSlider__BannerWrap TopRight">
+      <div
+        v-if="appendToBody"
+        class="PhotoSlider__BannerWrap TopRight"
+      >
         <div class="PhotoSlider__Banner">
           <close
             class="PhotoSlider__BannerIcon"
@@ -74,6 +80,12 @@
             class="PhotoSlider__BannerIcon"
             @click="handleZoomOut"
           />
+          <div
+            v-if="$slots.icon?.()"
+            class="PhotoSlider__BannerIconExtra"
+          >
+            <slot name="icon" />
+          </div>
         </div>
       </div>
       <div
@@ -221,6 +233,10 @@ export default defineComponent({
     shouldTransition: {
       type: Boolean,
       default: false,
+    },
+    appendToBody: {
+      type: Boolean,
+      default: true,
     },
     /**
      * 是否切换显隐覆盖物
