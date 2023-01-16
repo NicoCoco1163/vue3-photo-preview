@@ -31,7 +31,7 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, PropType, provide } from 'vue';
+import { defineComponent, PropType, provide, computed } from 'vue';
 import { updateItemKey, removeItemKey, handleShowKey, updateIndexKey } from '../symbols';
 import useItems from './useItems';
 import useVisible from './useVisible';
@@ -70,6 +70,18 @@ export default defineComponent({
      * 是否展示在组件中
      */
     showInComponent: {
+      type: Boolean,
+      default: false,
+    },
+    alwaysHideBanner: {
+      type: Boolean,
+      default: false,
+    },
+    alwaysShowThumbnail: {
+      type: Boolean,
+      default: false,
+    },
+    disableDoubleTap: {
       type: Boolean,
       default: false,
     },
@@ -118,6 +130,10 @@ export default defineComponent({
     provide(removeItemKey, removeItem);
     provide(handleShowKey, handleShow);
     provide(updateIndexKey, updateIndex);
+
+    provide('alwaysHideBanner', computed(() => _props.alwaysHideBanner !== false));
+    provide('alwaysShowThumbnail', computed(() => _props.alwaysShowThumbnail !== false));
+    provide('disableDoubleTap', computed(() => _props.disableDoubleTap !== false));
 
     return {
       items,

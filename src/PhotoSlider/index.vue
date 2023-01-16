@@ -34,7 +34,10 @@
           />
         </div>
       </div>
-      <div class="PhotoSlider__BannerWrap Bottom">
+      <div
+        v-if="!alwaysHideBannerRef"
+        class="PhotoSlider__BannerWrap Bottom"
+      >
         <!-- <div class="PhotoSlider__Counter">
           {{ index + 1 }} / {{ items.length }}
         </div> -->
@@ -145,7 +148,9 @@
         appear
       >
         <div
-          v-if="Array.isArray($props.items) && ($props.items.length > 1) && overlayVisible"
+          v-if="Array.isArray($props.items) && ($props.items.length > 1) && (
+            alwaysShowThumbnailRef || overlayVisible
+          )"
           class="PhotoSlider__BannerWrap Left"
           :style="{
             width: `${thumbnailWidth}px`
@@ -162,7 +167,7 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, computed, toRefs, PropType } from 'vue';
+import { defineComponent, computed, toRefs, PropType, inject, Ref, ref } from 'vue';
 import PhotoView from '../PhotoView/index.vue';
 import { horizontalOffset, minSwitchImageOffset } from '../constant';
 import useBodyEffect from './useBodyEffect';
@@ -297,6 +302,9 @@ export default defineComponent({
       );
     });
 
+    const alwaysHideBannerRef = inject<Ref<boolean>>('alwaysHideBanner', ref(false));
+    const alwaysShowThumbnailRef = inject<Ref<boolean>>('alwaysShowThumbnail', ref(false));
+
     return {
       innerWidth,
       thumbnailWidth,
@@ -305,6 +313,8 @@ export default defineComponent({
       showAnimateType,
       originRect,
       onShowAnimateEnd,
+      alwaysHideBannerRef,
+      alwaysShowThumbnailRef,
     };
   },
   data() {

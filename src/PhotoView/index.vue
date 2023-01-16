@@ -37,7 +37,7 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, PropType, toRefs } from 'vue';
+import { defineComponent, PropType, Ref, ref, toRefs, inject } from 'vue';
 import Spinner from './Spinner.vue';
 import useLoadImage from './useLoadImage';
 import useWindowResize from './useWindowResize';
@@ -91,12 +91,15 @@ export default defineComponent({
       emit('singleTap', clientX, clientY, e);
     };
 
+    const disableDoubleTapRef = inject<Ref<boolean>>('disableDoubleTap', ref(false));
+
     const {
       x, y, scale, rotate, touched,
       handleMouseDown, handleTouchStart, handleWheel, handleRotateLeft, handleRotateRight
     } = useMoveImage(
       width, height, naturalWidth, naturalHeight,
       setSuitableImageSize, onTouchStart, onTouchMove, onTouchEnd, onSingleTap,
+      disableDoubleTapRef.value,
     );
 
     useWindowResize(naturalWidth, naturalHeight, rotate, setSuitableImageSize);

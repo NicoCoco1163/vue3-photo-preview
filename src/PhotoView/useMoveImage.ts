@@ -1,4 +1,4 @@
-import { Ref, ref } from 'vue';
+import { Ref, ref, isRef } from 'vue';
 import isTouchDevice from '../utils/isTouchDevice';
 import throttle from 'lodash-es/throttle';
 import { TouchTypeEnum, EdgeTypeEnum } from '../types';
@@ -31,6 +31,7 @@ export default function useMoveImage(
   onTouchMove: (touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) => void,
   onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) => void,
   onSingleTap: (clientX: number, clientY: number, e: MouseEvent | TouchEvent) => void,
+  disableDoubleTap?: Ref<boolean> | boolean,
 ): useMoveImageReturn {
   // 图片 x 偏移量
   const x = ref(0);
@@ -173,6 +174,11 @@ export default function useMoveImage(
 
   const onDoubleTap = (newClientX: number, newClientY: number) => {
     if (touchType.value !== TouchTypeEnum.Normal) return;
+    if (
+      isRef(disableDoubleTap)
+        ? disableDoubleTap.value
+        : disableDoubleTap
+    ) return;
 
     if (scale.value === 1) {
       const toScale = Math.max(2, naturalWidth.value / width.value);
