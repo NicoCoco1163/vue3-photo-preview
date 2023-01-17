@@ -2,11 +2,17 @@ export default function getSuitableImageSize(
   naturalWidth: number,
   naturalHeight: number,
   rotate: number,
+  rootElement?: HTMLElement,
 ): {
   width: number;
   height: number;
 } {
   let { innerWidth, innerHeight } = window;
+  if (rootElement) {
+    const ctx = rootElement.getBoundingClientRect();
+    innerWidth = ctx.width;
+    innerHeight = ctx.height;
+  }
   // 如果图片不是水平，则调换宽高
   const isVertical = rotate % 180 !== 0;
   if (isVertical) {

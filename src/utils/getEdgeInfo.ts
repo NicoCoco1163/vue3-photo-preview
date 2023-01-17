@@ -8,11 +8,13 @@ export function getEdgeInfo({
   height,
   scale,
   rotate,
+  rootElement,
 }: {
   width: number,
   height: number,
   scale: number,
-  rotate: number
+  rotate: number,
+  rootElement?: HTMLElement,
 }): {
   edgeLeft: number,
   edgeRight: number,
@@ -25,7 +27,13 @@ export function getEdgeInfo({
     [width, height] = [height, width];
   }
 
-  const { innerWidth, innerHeight } = window;
+  let { innerWidth, innerHeight } = window;
+  if (rootElement) {
+    const ctx = rootElement.getBoundingClientRect();
+    innerWidth = ctx.width;
+    innerHeight = ctx.height;
+  }
+
   const currentWidth = width * scale;
   const currentHeight = height * scale;
 
@@ -65,6 +73,7 @@ export function getEdgeTypes({
   rotate,
   x,
   y,
+  rootElement,
 }: {
   width: number,
   height: number,
@@ -72,8 +81,9 @@ export function getEdgeTypes({
   rotate: number,
   x: number,
   y: number,
+  rootElement?: HTMLElement,
 }): EdgeTypeEnum[] {
-  const position = getEdgeInfo({ width, height, scale, rotate });
+  const position = getEdgeInfo({ width, height, scale, rotate, rootElement });
   const edgeTypes: EdgeTypeEnum[] = [];
 
   if (x === position.edgeLeft) {
@@ -102,6 +112,7 @@ export function getStandardPosition({
   rotate,
   x,
   y,
+  rootElement,
 }: {
   width: number,
   height: number,
@@ -109,12 +120,13 @@ export function getStandardPosition({
   rotate: number,
   x: number,
   y: number,
+  rootElement?: HTMLElement,
 }): {
   x: number,
   y: number,
   scale: number,
 } {
-  const { edgeLeft, edgeRight, edgeTop, edgeBottom } = getEdgeInfo({ width, height, scale, rotate });
+  const { edgeLeft, edgeRight, edgeTop, edgeBottom } = getEdgeInfo({ width, height, scale, rotate, rootElement });
 
   if (x > edgeLeft) {
     x = edgeLeft;

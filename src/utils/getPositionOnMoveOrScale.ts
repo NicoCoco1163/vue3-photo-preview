@@ -7,20 +7,27 @@ export default function getPositionOnMoveOrScale({
   clientX,
   clientY,
   fromScale,
-  toScale
+  toScale,
+  rootElement,
 }: {
   x: number,
   y: number,
   clientX: number,
   clientY: number,
   fromScale: number,
-  toScale: number
+  toScale: number,
+  rootElement?: HTMLElement,
 }): {
   x: number,
   y: number,
   scale: number,
 } {
-  const { innerWidth, innerHeight } = window;
+  let { innerWidth, innerHeight } = window;
+  if (rootElement) {
+    const ctx = rootElement.getBoundingClientRect();
+    innerWidth = ctx.width;
+    innerHeight = ctx.height;
+  }
   // 缩放前的图片的中心坐标
   const imageCenterClientX = innerWidth / 2 + x;
   const imageCenterClientY = innerHeight / 2 + y;

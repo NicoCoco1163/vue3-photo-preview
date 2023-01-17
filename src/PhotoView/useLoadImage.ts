@@ -1,7 +1,7 @@
 import { ref, Ref, watch } from 'vue';
 import getSuitableImageSize from '../utils/getSuitableImageSize';
 
-export default function useLoadImage(src: Ref<string>): {
+export default function useLoadImage(src: Ref<string>, rootElement?: HTMLElement): {
   width: Ref<number>;
   height: Ref<number>;
   loaded: Ref<boolean>;
@@ -16,7 +16,7 @@ export default function useLoadImage(src: Ref<string>): {
   const loaded = ref(false);
 
   function setSuitableImageSize(actualWidth: number, actualHeight: number, rotate: number) {
-    const imageSize = getSuitableImageSize(actualWidth, actualHeight, rotate);
+    const imageSize = getSuitableImageSize(actualWidth, actualHeight, rotate, rootElement);
     width.value = imageSize.width;
     height.value = imageSize.height;
   }

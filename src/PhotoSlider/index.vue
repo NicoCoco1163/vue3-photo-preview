@@ -6,11 +6,11 @@
     <div
       v-if="photoVisible"
       ref="wrapperRef"
-      class="PhotoSlider__Wrapper"
-      :class="{
+      :class="['PhotoSlider__Wrapper', {
         'PhotoSlider__Clean': showAnimateType !== ShowAnimateEnum.None ,
         'PhotoSlider__Hide': !overlayVisible,
-      }"
+        'NotFixed': !appendToBody,
+      }]"
     >
       <div
         class="PhotoSlider__Backdrop"
@@ -167,7 +167,7 @@
 </template>
 
 <script lang='ts'>
-import { defineComponent, computed, toRefs, PropType, inject, Ref, ref } from 'vue';
+import { defineComponent, computed, toRefs, PropType, inject, Ref, ref, onMounted } from 'vue';
 import PhotoView from '../PhotoView/index.vue';
 import { horizontalOffset, minSwitchImageOffset } from '../constant';
 import useBodyEffect from './useBodyEffect';
@@ -281,6 +281,7 @@ export default defineComponent({
   },
   emits: ['clickPhoto', 'clickMask', 'changeIndex', 'closeModal'],
   setup(props) {
+    const wrapperRef = ref();
     const { items, index, visible } = toRefs(props);
     const currentItem = computed<ItemType>(() => {
       return items.value[index.value] || {};
@@ -290,7 +291,11 @@ export default defineComponent({
     const {
       photoVisible, showAnimateType, originRect, onShowAnimateEnd
     } = useAnimationHandle(visible, currentItem);
-    const { innerWidth } = useInnerWidth();
+    const { innerWidth, handleResize } = useInnerWidth(
+      computed(() => !props.appendToBody && wrapperRef.value)
+    );
+
+    onMounted(handleResize);
 
     const thumbnailWidth = computed(() => {
       return Math.max(
@@ -306,6 +311,7 @@ export default defineComponent({
     const alwaysShowThumbnailRef = inject<Ref<boolean>>('alwaysShowThumbnail', ref(false));
 
     return {
+      wrapperRef,
       innerWidth,
       thumbnailWidth,
       currentItem,
