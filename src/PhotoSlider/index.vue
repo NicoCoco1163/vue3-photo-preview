@@ -436,7 +436,7 @@ export default defineComponent({
             scale: width / currentImage.width,
             rotate: 0,
             x: 0,
-            y: currentImage.width <= currentImage.height
+            y: (currentImage.height / currentImage.width) > (height / width)
               ? (height - currentImage.height) / -2
               : 0,
           });
