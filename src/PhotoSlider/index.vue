@@ -148,10 +148,8 @@
         appear
       >
         <div
-          v-if="Array.isArray($props.items) && ($props.items.length > 1) && (
-            alwaysShowThumbnailRef || overlayVisible
-          )"
-          class="PhotoSlider__BannerWrap Left"
+          v-if="Array.isArray($props.items) && ($props.items.length > 1) && overlayVisible"
+          class="PhotoSlider__BannerWrap_NotHover Left"
           :style="{
             width: `${thumbnailWidth}px`
           }"
@@ -307,8 +305,7 @@ export default defineComponent({
       );
     });
 
-    const alwaysHideBannerRef = inject<Ref<boolean>>('alwaysHideBanner', ref(false));
-    const alwaysShowThumbnailRef = inject<Ref<boolean>>('alwaysShowThumbnail', ref(false));
+    const alwaysHideBannerRef = inject<Ref<boolean>>('alwaysHideBanner');
 
     return {
       wrapperRef,
@@ -320,7 +317,6 @@ export default defineComponent({
       originRect,
       onShowAnimateEnd,
       alwaysHideBannerRef,
-      alwaysShowThumbnailRef,
     };
   },
   data() {
@@ -357,7 +353,7 @@ export default defineComponent({
     },
     showPrinterIcon() {
       return (typeof this.onPrint === 'function') ||
-        (typeof this?.$?.proxy?.$photoPreview?.onPrint === 'function');
+        (typeof this.$photoPreview?.onPrint === 'function');
     }
   },
   created() {
@@ -398,24 +394,22 @@ export default defineComponent({
     },
     handleDownload() {
       const item = this.items[this.index];
-      const proxy = this?.$?.proxy as any;
 
       if (typeof this.onDownload === 'function') {
         this.onDownload(item);
-      } else if (typeof proxy?.$photoPreview?.onDownload === 'function') {
-        proxy.$photoPreview.onDownload(item);
+      } else if (typeof this?.$photoPreview?.onDownload === 'function') {
+        this.$photoPreview.onDownload(item);
       } else {
         this.defaultOnDownload(item);
       }
     },
     handlePrint() {
       const item = this.items[this.index];
-      const proxy = this?.$?.proxy as any;
 
       if (typeof this.onPrint === 'function') {
         this.onPrint(item);
-      } else if (typeof proxy?.$photoPreview?.onPrint === 'function') {
-        proxy.$photoPreview.onPrint(item);
+      } else if (typeof this?.$photoPreview?.onPrint === 'function') {
+        this.$photoPreview.onPrint(item);
       }
     },
     toggleFlipHorizontal() {
@@ -647,7 +641,7 @@ export default defineComponent({
       if (this.hasMove) {
         return undefined;
       }
-      return this.shouldTransition ? transition : undefined;
+      return this.shouldTransition ? transition : 'initial';
     },
     getItemTransform() {
       return `translate3d(${-(this.innerWidth + this.horizontalOffset) * this.virtualIndex + this.touchMoveX}px, 0px, 0px)`;
@@ -668,6 +662,7 @@ export default defineComponent({
 
 .PhotoSlider__Wrapper.PhotoSlider__Clean {
   .PhotoSlider__BannerWrap,
+  .PhotoSlider__BannerWrap_NotHover,
   .PhotoSlider__ArrowLeft,
   .PhotoSlider__ArrowRight,
   .PhotoSlider__FooterWrap {
@@ -682,10 +677,14 @@ export default defineComponent({
 
 .PhotoSlider__Wrapper.PhotoSlider__Hide {
   .PhotoSlider__BannerWrap,
+  .PhotoSlider__BannerWrap_NotHover,
   .PhotoSlider__ArrowLeft,
   .PhotoSlider__ArrowRight,
   .PhotoSlider__FooterWrap {
     opacity: 0;
+  }
+  .PhotoSlider__BannerWrap_NotHover {
+    z-index: 8 !important;
   }
 }
 
@@ -698,6 +697,10 @@ export default defineComponent({
   overflow: hidden;
   z-index: 2000;
   user-select: none;
+
+  &.NotFixed {
+    position: absolute;
+  }
 
   .fade-enter-active,
   .fade-leave-active {
@@ -762,7 +765,13 @@ export default defineComponent({
     }
   }
 
-  .PhotoSlider__BannerWrap.Left {
+  .PhotoSlider__BannerWrap_NotHover {
+    position: absolute;
+    font-size: 0;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .PhotoSlider__BannerWrap_NotHover.Left {
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
@@ -794,6 +803,7 @@ export default defineComponent({
       font-size: 14px;
       color: rgb(78, 89, 105);
       background-color: #FFF;
+      box-shadow: 0 4px 10px #0000001a;
 
       .PhotoSlider__BannerIcon {
         vertical-align: top;

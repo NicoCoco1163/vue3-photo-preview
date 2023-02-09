@@ -77,10 +77,6 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-    alwaysShowThumbnail: {
-      type: Boolean,
-      default: false,
-    },
     disableDoubleTap: {
       type: Boolean,
       default: false,
@@ -115,7 +111,7 @@ export default defineComponent({
     }
   },
   emits: ['indexChange', 'visibleChange'],
-  setup(_props, { emit }) {
+  setup(props, { emit }) {
     const onIndexChange = () => {
       emit('indexChange', { index, items, visible });
     };
@@ -131,9 +127,8 @@ export default defineComponent({
     provide(handleShowKey, handleShow);
     provide(updateIndexKey, updateIndex);
 
-    provide('alwaysHideBanner', computed(() => _props.alwaysHideBanner !== false));
-    provide('alwaysShowThumbnail', computed(() => _props.alwaysShowThumbnail !== false));
-    provide('disableDoubleTap', computed(() => _props.disableDoubleTap !== false));
+    provide('alwaysHideBanner', computed(() => props.alwaysHideBanner !== false));
+    provide('disableDoubleTap', computed(() => props.disableDoubleTap !== false));
 
     return {
       items,

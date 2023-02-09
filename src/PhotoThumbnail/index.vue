@@ -81,7 +81,7 @@ export default defineComponent({
   &__Wrapper {
     background-color: #FFF;
     padding: 20px 0;
-    min-height: 100vh;
+    min-height: 100%;
   }
 
   &__Box {

@@ -61,10 +61,18 @@ export type PhotoProviderProps = {
   shouldTransition: boolean;
   // 默认背景透明度
   defaultBackdropOpacity: number;
+  // 非全屏模式
+  showInComponent: boolean;
+  // 禁止双击
+  disableDoubleTap: boolean;
+  // 隐藏工具栏
+  alwaysHideBanner: boolean;
   // 是否循环显示预览图
   loop: boolean;
   // 下载图片方法，不传使用内置的下载方法
   onDownload: (item: ItemType) => void | null;
+  // 打印
+  onPrint: (item: ItemType) => void | null;
 }
 
 export type PhototProviderReturnProps = {

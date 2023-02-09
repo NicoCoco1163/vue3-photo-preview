@@ -32,6 +32,7 @@ export default function useMoveImage(
   onTouchEnd: (touchType: TouchTypeEnum, clientX: number, clientY: number, lastScale: number, edgeTypes: EdgeTypeEnum[]) => void,
   onSingleTap: (clientX: number, clientY: number, e: MouseEvent | TouchEvent) => void,
   disableDoubleTap?: Ref<boolean> | boolean,
+  rootElement?: HTMLElement,
 ): useMoveImageReturn {
   // 图片 x 偏移量
   const x = ref(0);
@@ -91,7 +92,8 @@ export default function useMoveImage(
       scale: scale.value,
       rotate: rotate.value,
       x: lastX.value,
-      y: lastY.value
+      y: lastY.value,
+      rootElement
     });
 
     onTouchStart(newClientX, newClientY);
@@ -263,7 +265,10 @@ export default function useMoveImage(
   const setStandardPosition = (position: {
     width: number; height: number; scale: number; rotate: number; x: number, y: number
   }) => {
-    const standardPosition = getStandardPosition(position);
+    const standardPosition = getStandardPosition({
+      ...position,
+      rootElement,
+    });
     x.value = standardPosition.x;
     y.value = standardPosition.y;
     lastX.value = standardPosition.x;

@@ -100,7 +100,7 @@ export default defineComponent({
       emit('singleTap', clientX, clientY, e);
     };
 
-    const disableDoubleTapRef = inject<Ref<boolean>>('disableDoubleTap', ref(false));
+    const disableDoubleTapRef = inject<Ref<boolean>>('disableDoubleTap');
 
     const {
       x, y, scale, rotate, touched,
@@ -108,7 +108,8 @@ export default defineComponent({
     } = useMoveImage(
       width, height, naturalWidth, naturalHeight,
       setSuitableImageSize, onTouchStart, onTouchMove, onTouchEnd, onSingleTap,
-      disableDoubleTapRef.value,
+      disableDoubleTapRef?.value,
+      rootElement,
     );
 
     useWindowResize(naturalWidth, naturalHeight, rotate, setSuitableImageSize);

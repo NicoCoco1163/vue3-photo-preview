@@ -60,11 +60,18 @@ import PhotoSlider from 'vue3-photo-preview/src/PhotoSlider/index.vue';
         },
         components: { PhotoProvider, PhotoConsumer, ViewBox },
         template: `
-          <photo-provider :onDownload="onDownload">
-            <photo-consumer v-for="src in imgList" :intro="src" :key="src" :src="src">
-              <view-box :src="src" />
-            </photo-consumer>
-          </photo-provider>
+          <div style="width: 300px; height: 100vh; position: relative;">
+          <PhotoProvider
+            show-in-component
+            always-show-thumbnail
+            disable-double-tap
+          >
+            <PhotoConsumer v-for="item in imgList"
+              :src="item"
+              :key="item.id"
+            />
+          </PhotoProvider>
+          </div>
         `
       })
     }
