@@ -25,8 +25,11 @@ export default function getPositionOnMoveOrScale({
   let { innerWidth, innerHeight } = window;
   if (rootElement) {
     const ctx = rootElement.getBoundingClientRect();
+    clientX = clientX / innerWidth * ctx.width;
+    clientY = clientY / innerHeight * ctx.height;
     innerWidth = ctx.width;
     innerHeight = ctx.height;
+    
   }
   // 缩放前的图片的中心坐标
   const imageCenterClientX = innerWidth / 2 + x;
