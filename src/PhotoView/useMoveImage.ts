@@ -250,6 +250,7 @@ export default function useMoveImage(
       clientY: newClientY,
       fromScale: scale.value,
       toScale: newScale,
+      rootElement,
     });
 
     setStandardPosition({
