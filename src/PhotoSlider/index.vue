@@ -352,8 +352,7 @@ export default defineComponent({
       return this.items.slice(Math.max(this.index - 1, 0), Math.min(this.index + 2, len));
     },
     showPrinterIcon() {
-      return (typeof this.onPrint === 'function') ||
-        (typeof this.$photoPreview?.onPrint === 'function');
+      return typeof this.onPrint === 'function'
     }
   },
   created() {
@@ -397,8 +396,6 @@ export default defineComponent({
 
       if (typeof this.onDownload === 'function') {
         this.onDownload(item);
-      } else if (typeof this?.$photoPreview?.onDownload === 'function') {
-        this.$photoPreview.onDownload(item);
       } else {
         this.defaultOnDownload(item);
       }
@@ -408,8 +405,6 @@ export default defineComponent({
 
       if (typeof this.onPrint === 'function') {
         this.onPrint(item);
-      } else if (typeof this?.$photoPreview?.onPrint === 'function') {
-        this.$photoPreview.onPrint(item);
       }
     },
     toggleFlipHorizontal() {
