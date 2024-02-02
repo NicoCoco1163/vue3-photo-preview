@@ -67,6 +67,8 @@ export type PhotoProviderProps = {
   disableDoubleTap: boolean;
   // 隐藏工具栏
   alwaysHideBanner: boolean;
+  // 隐藏左侧缩略图
+  alwaysHideSlider: boolean;
   // 是否循环显示预览图
   loop: boolean;
   // 下载图片方法，不传使用内置的下载方法

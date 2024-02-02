@@ -77,6 +77,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    alwaysHideSlider: {
+      type: Boolean,
+      default: false,
+    },
     disableDoubleTap: {
       type: Boolean,
       default: false,
@@ -128,6 +132,7 @@ export default defineComponent({
     provide(updateIndexKey, updateIndex);
 
     provide('alwaysHideBanner', computed(() => props.alwaysHideBanner !== false));
+    provide('alwaysHideSlider', computed(() => props.alwaysHideSlider !== false));
     provide('disableDoubleTap', computed(() => props.disableDoubleTap !== false));
 
     return {

@@ -148,7 +148,7 @@
         appear
       >
         <div
-          v-if="Array.isArray($props.items) && ($props.items.length > 1) && overlayVisible"
+          v-if="Array.isArray($props.items) && ($props.items.length > 1) && !alwaysHideSliderRef && overlayVisible"
           class="PhotoSlider__BannerWrap_NotHover Left"
           :style="{
             width: `${thumbnailWidth}px`
@@ -306,6 +306,7 @@ export default defineComponent({
     });
 
     const alwaysHideBannerRef = inject<Ref<boolean>>('alwaysHideBanner');
+    const alwaysHideSliderRef = inject<Ref<boolean>>('alwaysHideSlider');
 
     return {
       wrapperRef,
@@ -317,6 +318,7 @@ export default defineComponent({
       originRect,
       onShowAnimateEnd,
       alwaysHideBannerRef,
+      alwaysHideSliderRef,
     };
   },
   data() {
